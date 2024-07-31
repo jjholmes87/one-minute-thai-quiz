@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { readXlsxFile } from '../utils';
 import AnswerCard from './AnswerCard';
+import '../App.css'; // Import the stylesheet
 
 const Quiz = () => {
   const [words, setWords] = useState([]);
@@ -68,14 +69,16 @@ const Quiz = () => {
   };
 
   if (timer === 0) {
-    return <div>Game Over! Your score: {score}</div>;
+    return <div className="game-over">Game Over! Your score: {score}</div>;
   }
 
   return (
-    <div>
+    <div className="quiz-container">
       <h1>1 Minute Thai and English Quiz</h1>
-      <div>Score: {score}</div>
-      <div>Time: {timer}</div>
+      <div className="score-timer">
+        <div className="score">Score: {score}</div>
+        <div className="timer">Time: {timer}</div>
+      </div>
       <div>{currentWord.Thai}</div>
       <div className="choices">
         {choices.map((choice, index) => (

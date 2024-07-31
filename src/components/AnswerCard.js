@@ -1,4 +1,5 @@
 import React from 'react';
+import '../App.css'; // Import the stylesheet
 
 const AnswerCard = ({ choice, onClick }) => {
   return (
