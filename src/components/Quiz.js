@@ -1,4 +1,5 @@
 // src/components/Quiz.js
+
 import React, { useState, useEffect, useRef } from 'react';
 import { readXlsxFile } from '../utils';
 import AnswerCard from './AnswerCard';
@@ -11,6 +12,7 @@ const Quiz = ({ mode }) => {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(60);
   const [feedback, setFeedback] = useState('');
+  const [highlightedChoice, setHighlightedChoice] = useState(null);
 
   const rightSoundRef = useRef(null);
   const wrongSoundRef = useRef(null);
@@ -54,11 +56,9 @@ const Quiz = ({ mode }) => {
 
     setCurrentWord(newWord);
 
-    const newChoices = [mode === 'thai-to-english' ? newWord.English : newWord.Thai];
+    const newChoices = [newWord.English];
     while (newChoices.length < 4) {
-      const randomChoice = mode === 'thai-to-english'
-        ? wordList[Math.floor(Math.random() * wordList.length)].English
-        : wordList[Math.floor(Math.random() * wordList.length)].Thai;
+      const randomChoice = wordList[Math.floor(Math.random() * wordList.length)].English;
       if (!newChoices.includes(randomChoice)) {
         newChoices.push(randomChoice);
       }
@@ -67,6 +67,7 @@ const Quiz = ({ mode }) => {
     const shuffledChoices = shuffleArray(newChoices);
     console.log("Choices:", shuffledChoices);
     setChoices(shuffledChoices);
+    setHighlightedChoice(null); // Reset the highlighted choice
   };
 
   const shuffleArray = (array) => {
@@ -74,29 +75,34 @@ const Quiz = ({ mode }) => {
   };
 
   const handleAnswerClick = (choice) => {
-    if ((mode === 'thai-to-english' && choice === currentWord.English) ||
-        (mode === 'english-to-thai' && choice === currentWord.Thai)) {
+    const correctAnswer = currentWord.English;
+
+    if (choice === correctAnswer) {
       setScore(score + 1);
       setTimer(timer + 10);
-      setFeedback('Correct! +10 Seconds');
+      setFeedback('ถูกต้อง! +10 วินาที');
       rightSoundRef.current.play();
+      setHighlightedChoice(null); // Reset the highlighted choice
     } else {
+      const newTimer = Math.max(timer - 10, 0); // Deduct 10 seconds but not below 0
       setScore(score - 1);
-      setFeedback('Incorrect!');
+      setTimer(newTimer);
+      setFeedback(`ผิดพลาด! คำตอบที่ถูกต้องคือ "${correctAnswer}". ลดเวลา 10 วินาที`);
       wrongSoundRef.current.play();
+      setHighlightedChoice(correctAnswer);
     }
     setNewWord(words);
   };
 
   useEffect(() => {
-    const feedbackTimeout = setTimeout(() => setFeedback(''), 2000);
+    const feedbackTimeout = setTimeout(() => setFeedback(''), 5000); // Show feedback for 5 seconds
     return () => clearTimeout(feedbackTimeout);
   }, [feedback]);
 
   if (timer === 0) {
     return (
       <div className="quiz-container">
-        <div className="game-over">Game Over! Your score: {score}</div>
+        <div className="game-over">หมดเวลา! คะแนนของคุณ: {score}</div>
         <audio ref={gameOverSoundRef} src="/gameover.mp3"></audio>
       </div>
     );
@@ -104,16 +110,25 @@ const Quiz = ({ mode }) => {
 
   return (
     <div className="quiz-container">
-      <h1>1 Minute {mode === 'thai-to-english' ? 'Thai to English' : 'English to Thai'} Quiz</h1>
+      <h1>การทดสอบภาษาไทย - อังกฤษ 1 นาที</h1>
       <div className="score-timer">
-        <div className="score">Score: {score}</div>
-        <div className="timer">Time: {timer}</div>
+        <div className="score">คะแนน: {score}</div>
+        <div className="timer">เวลา: {timer}</div>
       </div>
-      {feedback && <div className={`feedback ${feedback.includes('Correct') ? 'correct' : 'incorrect'}`}>{feedback}</div>}
-      <div>{mode === 'thai-to-english' ? currentWord.Thai : currentWord.English}</div>
+      {feedback && (
+        <div className={`feedback ${feedback.includes('ถูกต้อง') ? 'correct' : 'incorrect'}`}>
+          {feedback}
+        </div>
+      )}
+      <div>{currentWord.Thai}</div>
       <div className="choices">
         {choices.map((choice, index) => (
-          <AnswerCard key={index} choice={choice} onClick={() => handleAnswerClick(choice)} />
+          <AnswerCard
+            key={index}
+            choice={choice}
+            onClick={() => handleAnswerClick(choice)}
+            highlight={choice === highlightedChoice}
+          />
         ))}
       </div>
       <audio ref={rightSoundRef} src="/right.mp3"></audio>
