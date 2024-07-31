@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { readXlsxFile } from '../utils';
 import AnswerCard from './AnswerCard';
 import '../App.css'; // Import the stylesheet
@@ -9,6 +9,10 @@ const Quiz = () => {
   const [choices, setChoices] = useState([]);
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(60);
+
+  const rightSoundRef = useRef(null);
+  const wrongSoundRef = useRef(null);
+  const gameOverSoundRef = useRef(null);
 
   useEffect(() => {
     const fetchWords = async () => {
@@ -32,6 +36,12 @@ const Quiz = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (timer === 0) {
+      gameOverSoundRef.current.play();
+    }
+  }, [timer]);
 
   const setNewWord = (wordList) => {
     if (wordList.length === 0) return;
@@ -62,14 +72,21 @@ const Quiz = () => {
   const handleAnswerClick = (choice) => {
     if (choice === currentWord.English) {
       setScore(score + 1);
+      rightSoundRef.current.play();
     } else {
       setScore(score - 1);
+      wrongSoundRef.current.play();
     }
     setNewWord(words);
   };
 
   if (timer === 0) {
-    return <div className="game-over">Game Over! Your score: {score}</div>;
+    return (
+      <div className="quiz-container">
+        <div className="game-over">Game Over! Your score: {score}</div>
+        <audio ref={gameOverSoundRef} src="/gameover.mp3"></audio>
+      </div>
+    );
   }
 
   return (
@@ -85,6 +102,8 @@ const Quiz = () => {
           <AnswerCard key={index} choice={choice} onClick={() => handleAnswerClick(choice)} />
         ))}
       </div>
+      <audio ref={rightSoundRef} src="/right.mp3"></audio>
+      <audio ref={wrongSoundRef} src="/wrong.mp3"></audio>
     </div>
   );
 };
