@@ -1,6 +1,6 @@
 // src/components/Quiz.js
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { readXlsxFile } from '../utils';
 import AnswerCard from './AnswerCard';
 import '../App.css'; // Import the stylesheet
@@ -19,7 +19,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
   const wrongSoundRef = useRef(null);
   const gameOverSoundRef = useRef(null);
 
-  const setNewWord = (wordList) => {
+  const setNewWord = useCallback((wordList) => {
     if (wordList.length === 0) return;
 
     const randomIndex = Math.floor(Math.random() * wordList.length);
@@ -40,7 +40,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
     console.log("Choices:", shuffledChoices);
     setChoices(shuffledChoices);
     setHighlightedChoice(null); // Reset the highlighted choice
-  };
+  }, []);
 
   const shuffleArray = (array) => {
     return array.sort(() => Math.random() - 0.5);
@@ -61,7 +61,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
       const newTimer = Math.max(timer - 10, 0); // Deduct 10 seconds but not below 0
       setScore(score - 1);
       setTimer(newTimer);
-      setFeedback(`Incorrect! The correct answer was "${correctAnswer}". Deducted 10 Seconds`);
+      setFeedback(`Incorrect! The correct answer was "${correctAnswer}". -10 Seconds`);
       if (wrongSoundRef.current) {
         wrongSoundRef.current.play();
       }
@@ -70,7 +70,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
     setNewWord(words);
   };
 
-  const fetchWords = async () => {
+  const fetchWords = useCallback(async () => {
     try {
       const response = await fetch('/words.xlsx');
       const blob = await response.blob();
@@ -81,7 +81,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
     } catch (error) {
       console.error("Error fetching words:", error);
     }
-  };
+  }, [setNewWord]);
 
   useEffect(() => {
     fetchWords(); // Fetch words on component mount
@@ -98,7 +98,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, [fetchWords]); // Add fetchWords to the dependency array
 
   useEffect(() => {
     if (gameOver) {
