@@ -13,6 +13,7 @@ const Quiz = ({ mode }) => {
   const [timer, setTimer] = useState(60);
   const [feedback, setFeedback] = useState('');
   const [highlightedChoice, setHighlightedChoice] = useState(null);
+  const [gameOver, setGameOver] = useState(false); // Track if game is over
 
   const rightSoundRef = useRef(null);
   const wrongSoundRef = useRef(null);
@@ -35,17 +36,26 @@ const Quiz = ({ mode }) => {
     fetchWords();
 
     const interval = setInterval(() => {
-      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setGameOver(true); // Set game over state
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (timer === 0) {
-      gameOverSoundRef.current.play();
+    if (gameOver) {
+      if (gameOverSoundRef.current) {
+        gameOverSoundRef.current.play();
+      }
     }
-  }, [timer]);
+  }, [gameOver]);
 
   const setNewWord = (wordList) => {
     if (wordList.length === 0) return;
@@ -81,14 +91,18 @@ const Quiz = ({ mode }) => {
       setScore(score + 1);
       setTimer(timer + 10);
       setFeedback('ถูกต้อง! +10 วินาที');
-      rightSoundRef.current.play();
+      if (rightSoundRef.current) {
+        rightSoundRef.current.play();
+      }
       setHighlightedChoice(null); // Reset the highlighted choice
     } else {
       const newTimer = Math.max(timer - 10, 0); // Deduct 10 seconds but not below 0
       setScore(score - 1);
       setTimer(newTimer);
       setFeedback(`ผิดพลาด! คำตอบที่ถูกต้องคือ "${correctAnswer}". ลดเวลา 10 วินาที`);
-      wrongSoundRef.current.play();
+      if (wrongSoundRef.current) {
+        wrongSoundRef.current.play();
+      }
       setHighlightedChoice(correctAnswer);
     }
     setNewWord(words);
@@ -99,7 +113,7 @@ const Quiz = ({ mode }) => {
     return () => clearTimeout(feedbackTimeout);
   }, [feedback]);
 
-  if (timer === 0) {
+  if (gameOver) {
     return (
       <div className="quiz-container">
         <div className="game-over">หมดเวลา! คะแนนของคุณ: {score}</div>
