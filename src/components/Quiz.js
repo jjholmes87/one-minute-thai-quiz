@@ -5,7 +5,7 @@ import { readXlsxFile } from '../utils';
 import AnswerCard from './AnswerCard';
 import '../App.css'; // Import the stylesheet
 
-const Quiz = ({ mode }) => {
+const Quiz = ({ mode, onPlayAgain }) => {
   const [words, setWords] = useState([]);
   const [currentWord, setCurrentWord] = useState({});
   const [choices, setChoices] = useState([]);
@@ -99,7 +99,7 @@ const Quiz = ({ mode }) => {
       const newTimer = Math.max(timer - 10, 0); // Deduct 10 seconds but not below 0
       setScore(score - 1);
       setTimer(newTimer);
-      setFeedback(`Incorrect! The correct answer was "${correctAnswer}". -10 Seconds`);
+      setFeedback(`Incorrect! The correct answer was "${correctAnswer}". Deducted 10 Seconds`);
       if (wrongSoundRef.current) {
         wrongSoundRef.current.play();
       }
@@ -113,10 +113,17 @@ const Quiz = ({ mode }) => {
     return () => clearTimeout(feedbackTimeout);
   }, [feedback]);
 
+  const handlePlayAgain = () => {
+    window.location.reload(); // Reload the page
+  };
+
   if (gameOver) {
     return (
       <div className="quiz-container">
-        <div className="game-over">Time's up! Your score: {score}</div>
+        <div className="game-over">
+          Time's up! Your score: {score}
+        </div>
+        <button onClick={handlePlayAgain} className="start-screen-button">Play Again</button>
         <audio ref={gameOverSoundRef} src="/gameover.mp3"></audio>
       </div>
     );
