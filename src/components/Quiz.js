@@ -1,9 +1,10 @@
+// src/components/Quiz.js
 import React, { useState, useEffect, useRef } from 'react';
 import { readXlsxFile } from '../utils';
 import AnswerCard from './AnswerCard';
 import '../App.css'; // Import the stylesheet
 
-const Quiz = () => {
+const Quiz = ({ mode }) => {
   const [words, setWords] = useState([]);
   const [currentWord, setCurrentWord] = useState({});
   const [choices, setChoices] = useState([]);
@@ -53,9 +54,11 @@ const Quiz = () => {
 
     setCurrentWord(newWord);
 
-    const newChoices = [newWord.English];
+    const newChoices = [mode === 'thai-to-english' ? newWord.English : newWord.Thai];
     while (newChoices.length < 4) {
-      const randomChoice = wordList[Math.floor(Math.random() * wordList.length)].English;
+      const randomChoice = mode === 'thai-to-english'
+        ? wordList[Math.floor(Math.random() * wordList.length)].English
+        : wordList[Math.floor(Math.random() * wordList.length)].Thai;
       if (!newChoices.includes(randomChoice)) {
         newChoices.push(randomChoice);
       }
@@ -71,10 +74,11 @@ const Quiz = () => {
   };
 
   const handleAnswerClick = (choice) => {
-    if (choice === currentWord.English) {
+    if ((mode === 'thai-to-english' && choice === currentWord.English) ||
+        (mode === 'english-to-thai' && choice === currentWord.Thai)) {
       setScore(score + 1);
       setTimer(timer + 10);
-      setFeedback('Correct! + 10 Seconds');
+      setFeedback('Correct! +10 Seconds');
       rightSoundRef.current.play();
     } else {
       setScore(score - 1);
@@ -100,13 +104,13 @@ const Quiz = () => {
 
   return (
     <div className="quiz-container">
-      <h1>1 Minute Thai and English Quiz</h1>
+      <h1>1 Minute {mode === 'thai-to-english' ? 'Thai to English' : 'English to Thai'} Quiz</h1>
       <div className="score-timer">
         <div className="score">Score: {score}</div>
         <div className="timer">Time: {timer}</div>
       </div>
       {feedback && <div className={`feedback ${feedback.includes('Correct') ? 'correct' : 'incorrect'}`}>{feedback}</div>}
-      <div>{currentWord.Thai}</div>
+      <div>{mode === 'thai-to-english' ? currentWord.Thai : currentWord.English}</div>
       <div className="choices">
         {choices.map((choice, index) => (
           <AnswerCard key={index} choice={choice} onClick={() => handleAnswerClick(choice)} />
