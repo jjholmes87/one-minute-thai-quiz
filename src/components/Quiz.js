@@ -9,6 +9,7 @@ const Quiz = () => {
   const [choices, setChoices] = useState([]);
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(60);
+  const [feedback, setFeedback] = useState('');
 
   const rightSoundRef = useRef(null);
   const wrongSoundRef = useRef(null);
@@ -72,13 +73,21 @@ const Quiz = () => {
   const handleAnswerClick = (choice) => {
     if (choice === currentWord.English) {
       setScore(score + 1);
+      setTimer(timer + 10);
+      setFeedback('Correct! + 10 Seconds');
       rightSoundRef.current.play();
     } else {
       setScore(score - 1);
+      setFeedback('Incorrect!');
       wrongSoundRef.current.play();
     }
     setNewWord(words);
   };
+
+  useEffect(() => {
+    const feedbackTimeout = setTimeout(() => setFeedback(''), 2000);
+    return () => clearTimeout(feedbackTimeout);
+  }, [feedback]);
 
   if (timer === 0) {
     return (
@@ -96,6 +105,7 @@ const Quiz = () => {
         <div className="score">Score: {score}</div>
         <div className="timer">Time: {timer}</div>
       </div>
+      {feedback && <div className={`feedback ${feedback.includes('Correct') ? 'correct' : 'incorrect'}`}>{feedback}</div>}
       <div>{currentWord.Thai}</div>
       <div className="choices">
         {choices.map((choice, index) => (

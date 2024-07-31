@@ -65,3 +65,16 @@ h1 {
   font-size: 1.2em;
   color: #e53935;
 }
+
+.feedback {
+  font-size: 1.2em;
+  margin: 10px 0;
+}
+
+.correct {
+  color: green;
+}
+
+.incorrect {
+  color: red;
+}
