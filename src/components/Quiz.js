@@ -90,7 +90,7 @@ const Quiz = ({ mode }) => {
     if (choice === correctAnswer) {
       setScore(score + 1);
       setTimer(timer + 10);
-      setFeedback('ถูกต้อง! +10 วินาที');
+      setFeedback('Correct! +10 Seconds');
       if (rightSoundRef.current) {
         rightSoundRef.current.play();
       }
@@ -99,7 +99,7 @@ const Quiz = ({ mode }) => {
       const newTimer = Math.max(timer - 10, 0); // Deduct 10 seconds but not below 0
       setScore(score - 1);
       setTimer(newTimer);
-      setFeedback(`ผิดพลาด! คำตอบที่ถูกต้องคือ "${correctAnswer}". ลดเวลา 10 วินาที`);
+      setFeedback(`Incorrect! The correct answer was "${correctAnswer}". -10 Seconds`);
       if (wrongSoundRef.current) {
         wrongSoundRef.current.play();
       }
@@ -116,21 +116,26 @@ const Quiz = ({ mode }) => {
   if (gameOver) {
     return (
       <div className="quiz-container">
-        <div className="game-over">หมดเวลา! คะแนนของคุณ: {score}</div>
+        <div className="game-over">Time's up! Your score: {score}</div>
         <audio ref={gameOverSoundRef} src="/gameover.mp3"></audio>
       </div>
     );
   }
 
+  // Apply styles directly inline
+  const feedbackStyle = feedback.includes('Correct') 
+    ? { color: 'green', border: '2px solid green', backgroundColor: '#e0ffe0', padding: '10px', borderRadius: '5px', fontWeight: 'bold' }
+    : { color: 'red', border: '2px solid red', backgroundColor: '#ffe0e0', padding: '10px', borderRadius: '5px', fontWeight: 'bold' };
+
   return (
     <div className="quiz-container">
-      <h1>การทดสอบภาษาไทย - อังกฤษ 1 นาที</h1>
+      <h1>1 Minute Thai and English Quiz</h1>
       <div className="score-timer">
-        <div className="score">คะแนน: {score}</div>
-        <div className="timer">เวลา: {timer}</div>
+        <div className="score">Score: {score}</div>
+        <div className="timer">Time: {timer}</div>
       </div>
       {feedback && (
-        <div className={`feedback ${feedback.includes('ถูกต้อง') ? 'correct' : 'incorrect'}`}>
+        <div style={feedbackStyle}>
           {feedback}
         </div>
       )}
