@@ -19,44 +19,6 @@ const Quiz = ({ mode, onPlayAgain }) => {
   const wrongSoundRef = useRef(null);
   const gameOverSoundRef = useRef(null);
 
-  useEffect(() => {
-    const fetchWords = async () => {
-      try {
-        const response = await fetch('/words.xlsx');
-        const blob = await response.blob();
-        const data = await readXlsxFile(blob);
-        console.log("Fetched words:", data);
-        setWords(data);
-        setNewWord(data);
-      } catch (error) {
-        console.error("Error fetching words:", error);
-      }
-    };
-
-    fetchWords();
-
-    const interval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setGameOver(true); // Set game over state
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    if (gameOver) {
-      if (gameOverSoundRef.current) {
-        gameOverSoundRef.current.play();
-      }
-    }
-  }, [gameOver]);
-
   const setNewWord = (wordList) => {
     if (wordList.length === 0) return;
 
@@ -107,6 +69,44 @@ const Quiz = ({ mode, onPlayAgain }) => {
     }
     setNewWord(words);
   };
+
+  const fetchWords = async () => {
+    try {
+      const response = await fetch('/words.xlsx');
+      const blob = await response.blob();
+      const data = await readXlsxFile(blob);
+      console.log("Fetched words:", data);
+      setWords(data);
+      setNewWord(data); // Set initial word
+    } catch (error) {
+      console.error("Error fetching words:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWords(); // Fetch words on component mount
+
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setGameOver(true); // Set game over state
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  useEffect(() => {
+    if (gameOver) {
+      if (gameOverSoundRef.current) {
+        gameOverSoundRef.current.play();
+      }
+    }
+  }, [gameOver]);
 
   useEffect(() => {
     const feedbackTimeout = setTimeout(() => setFeedback(''), 5000); // Show feedback for 5 seconds
