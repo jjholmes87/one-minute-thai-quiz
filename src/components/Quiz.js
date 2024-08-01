@@ -28,9 +28,12 @@ const Quiz = ({ mode, onPlayAgain }) => {
 
     setCurrentWord(newWord);
 
-    const newChoices = [newWord.English];
+    const questionLanguage = mode === 'ThaiToEnglish' ? 'Thai' : 'English';
+    const answerLanguage = mode === 'ThaiToEnglish' ? 'English' : 'Thai';
+
+    const newChoices = [newWord[answerLanguage]];
     while (newChoices.length < 4) {
-      const randomChoice = wordList[Math.floor(Math.random() * wordList.length)].English;
+      const randomChoice = wordList[Math.floor(Math.random() * wordList.length)][answerLanguage];
       if (!newChoices.includes(randomChoice)) {
         newChoices.push(randomChoice);
       }
@@ -40,14 +43,14 @@ const Quiz = ({ mode, onPlayAgain }) => {
     console.log("Choices:", shuffledChoices);
     setChoices(shuffledChoices);
     setHighlightedChoice(null); // Reset the highlighted choice
-  }, []);
+  }, [mode]);
 
   const shuffleArray = (array) => {
     return array.sort(() => Math.random() - 0.5);
   };
 
   const handleAnswerClick = (choice) => {
-    const correctAnswer = currentWord.English;
+    const correctAnswer = mode === 'ThaiToEnglish' ? currentWord.English : currentWord.Thai;
 
     if (choice === correctAnswer) {
       setScore(score + 1);
@@ -61,7 +64,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
       const newTimer = Math.max(timer - 10, 0); // Deduct 10 seconds but not below 0
       setScore(score - 1);
       setTimer(newTimer);
-      setFeedback(`Incorrect! The correct answer was "${correctAnswer}". -10 Seconds`);
+      setFeedback(`Incorrect! -10 Seconds`);
       if (wrongSoundRef.current) {
         wrongSoundRef.current.play();
       }
@@ -146,7 +149,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
           {feedback}
         </div>
       )}
-      <div>{currentWord.Thai}</div>
+      <div>{mode === 'ThaiToEnglish' ? currentWord.Thai : currentWord.English}</div>
       <div className="choices">
         {choices.map((choice, index) => (
           <AnswerCard
