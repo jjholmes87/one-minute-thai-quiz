@@ -28,7 +28,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
 
     setCurrentWord(newWord);
 
-    const questionLanguage = mode === 'ThaiToEnglish' ? 'Thai' : 'English';
+    //const questionLanguage = mode === 'ThaiToEnglish' ? 'Thai' : 'English';
     const answerLanguage = mode === 'ThaiToEnglish' ? 'English' : 'Thai';
 
     const newChoices = [newWord[answerLanguage]];
