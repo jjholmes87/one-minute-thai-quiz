@@ -1,60 +1,49 @@
-// src/components/Quiz.js
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { readXlsxFile } from '../utils';
 import AnswerCard from './AnswerCard';
 import '../App.css'; // Import the stylesheet
 
-const Quiz = ({ mode, onPlayAgain }) => {
-  const [words, setWords] = useState([]);
-  const [currentWord, setCurrentWord] = useState({});
-  const [choices, setChoices] = useState([]);
+const consonantClasses = {
+  mid: ['ก', 'จ', 'ฎ', 'ฏ', 'ด', 'ต', 'บ', 'ป', 'อ'],
+  high: ['ข', 'ฃ', 'ฉ', 'ฐ', 'ถ', 'ผ', 'ฝ', 'ศ', 'ษ', 'ส', 'ห'],
+  low: ['ค', 'ฅ', 'ฆ', 'ง', 'ช', 'ซ', 'ฌ', 'ญ', 'ฑ', 'ฒ', 'ณ', 'ท', 'ธ', 'น', 'พ', 'ฟ', 'ภ', 'ม', 'ย', 'ร', 'ล', 'ว', 'ฬ', 'ฮ']
+};
+
+const getRandomConsonant = () => {
+  const allConsonants = [...consonantClasses.mid, ...consonantClasses.high, ...consonantClasses.low];
+  const randomConsonant = allConsonants[Math.floor(Math.random() * allConsonants.length)];
+  return randomConsonant;
+};
+
+const getConsonantClass = (consonant) => {
+  if (consonantClasses.mid.includes(consonant)) return 'mid';
+  if (consonantClasses.high.includes(consonant)) return 'high';
+  if (consonantClasses.low.includes(consonant)) return 'low';
+  return null;
+};
+
+const ConsonantsQuiz = ({ onPlayAgain }) => {
+  const [currentConsonant, setCurrentConsonant] = useState('');
+  const [choices, setChoices] = useState(['mid', 'high', 'low']);
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(60);
   const [feedback, setFeedback] = useState('');
   const [highlightedChoice, setHighlightedChoice] = useState(null);
-  const [gameOver, setGameOver] = useState(false); // Track if game is over
-  const [isPaused, setIsPaused] = useState(false); // Add state to track if the game is paused
-  const timerIntervalRef = useRef(null); // Add a reference to store the timer interval
+  const [gameOver, setGameOver] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const timerIntervalRef = useRef(null);
 
   const rightSoundRef = useRef(null);
   const wrongSoundRef = useRef(null);
   const gameOverSoundRef = useRef(null);
 
-  const setNewWord = useCallback((wordList) => {
-    if (wordList.length === 0) return;
-
-    const randomIndex = Math.floor(Math.random() * wordList.length);
-    const newWord = wordList[randomIndex];
-    console.log("Selected new word:", newWord);
-
-    setCurrentWord(newWord);
-
-    const questionLanguage = mode === 'thai-to-english' ? 'Thai' : 'English';
-    const answerLanguage = mode === 'thai-to-english' ? 'English' : 'Thai';
-
-    const newChoices = [newWord[answerLanguage]];
-    while (newChoices.length < 4) {
-      const randomChoice = wordList[Math.floor(Math.random() * wordList.length)][answerLanguage];
-      if (!newChoices.includes(randomChoice)) {
-        newChoices.push(randomChoice);
-      }
-    }
-
-    const shuffledChoices = shuffleArray(newChoices);
-    console.log("Choices:", shuffledChoices);
-    setChoices(shuffledChoices);
-    setHighlightedChoice(null); // Reset the highlighted choice
-  }, [mode]);
-
-  const shuffleArray = (array) => {
-    return array.sort(() => Math.random() - 0.5);
-  };
+  const setNewConsonant = useCallback(() => {
+    const newConsonant = getRandomConsonant();
+    setCurrentConsonant(newConsonant);
+    setHighlightedChoice(null);
+  }, []);
 
   const handleAnswerClick = (choice) => {
-    const correctAnswer = mode === 'thai-to-english' ? currentWord.English : currentWord.Thai;
-    const questionWord = mode === 'thai-to-english' ? currentWord.Thai : currentWord.English;
-
+    const correctAnswer = getConsonantClass(currentConsonant);
     if (choice === correctAnswer) {
       setScore(score + 1);
       setTimer(timer + 10);
@@ -62,45 +51,31 @@ const Quiz = ({ mode, onPlayAgain }) => {
       if (rightSoundRef.current) {
         rightSoundRef.current.play();
       }
-      setHighlightedChoice(null); // Reset the highlighted choice
-      setNewWord(words);
+      setHighlightedChoice(null);
+      setNewConsonant();
 
-      // Clear feedback after 5 seconds for correct answer
       setTimeout(() => setFeedback(''), 5000);
     } else {
-      const newTimer = Math.max(timer - 10, 0); // Deduct 10 seconds but not below 0
+      const newTimer = Math.max(timer - 10, 0);
       setScore(score - 1);
       setTimer(newTimer);
-      setFeedback(`Incorrect! -10 Seconds. '${questionWord}' = '${correctAnswer}'`);
+      setFeedback(`Incorrect! -10 Seconds. '${currentConsonant}' = '${correctAnswer}'`);
       if (wrongSoundRef.current) {
-        wrongSoundRef.current.play(); // Play the wrong sound
+        wrongSoundRef.current.play();
       }
       setHighlightedChoice(correctAnswer);
-      setIsPaused(true); // Pause the game
+      setIsPaused(true);
     }
   };
 
   const handleUnpause = () => {
     setIsPaused(false);
-    setFeedback(''); // Clear feedback message
-    setNewWord(words); // Set a new word when unpausing
+    setFeedback('');
+    setNewConsonant();
   };
 
-  const fetchWords = useCallback(async () => {
-    try {
-      const response = await fetch('/words.xlsx');
-      const blob = await response.blob();
-      const data = await readXlsxFile(blob);
-      console.log("Fetched words:", data);
-      setWords(data);
-      setNewWord(data); // Set initial word
-    } catch (error) {
-      console.error("Error fetching words:", error);
-    }
-  }, [setNewWord]);
-
   useEffect(() => {
-    fetchWords(); // Fetch words on component mount
+    setNewConsonant();
 
     if (isPaused) {
       clearInterval(timerIntervalRef.current);
@@ -111,7 +86,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
       setTimer((prev) => {
         if (prev <= 1) {
           clearInterval(timerIntervalRef.current);
-          setGameOver(true); // Set game over state
+          setGameOver(true);
           return 0;
         }
         return prev - 1;
@@ -119,7 +94,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
     }, 1000);
 
     return () => clearInterval(timerIntervalRef.current);
-  }, [isPaused, fetchWords]); // Add fetchWords to the dependency array
+  }, [isPaused, setNewConsonant]);
 
   useEffect(() => {
     if (gameOver) {
@@ -130,7 +105,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
   }, [gameOver]);
 
   const handlePlayAgain = () => {
-    window.location.reload(); // Reload the page
+    window.location.reload();
   };
 
   if (gameOver) {
@@ -147,7 +122,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
 
   if (isPaused) {
     if (wrongSoundRef.current) {
-      wrongSoundRef.current.play(); // Play the wrong sound when paused
+      wrongSoundRef.current.play();
     }
     return (
       <div className="quiz-container">
@@ -160,14 +135,13 @@ const Quiz = ({ mode, onPlayAgain }) => {
     );
   }
 
-  // Apply styles directly inline
   const feedbackStyle = feedback.includes('Correct') 
     ? { color: 'green', border: '2px solid green', backgroundColor: '#e0ffe0', padding: '10px', borderRadius: '5px', fontWeight: 'bold' }
     : { color: 'red', border: '2px solid red', backgroundColor: '#ffe0e0', padding: '10px', borderRadius: '5px', fontWeight: 'bold' };
 
   return (
     <div className="quiz-container">
-      <h1>1 Minute Thai and English Quiz</h1>
+      <h1>1 Minute Thai Consonant Class Quiz</h1>
       <div className="score-timer">
         <div className="score">Score: {score}</div>
         <div className="timer">Time: {timer}</div>
@@ -177,7 +151,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
           {feedback}
         </div>
       )}
-      <div>{mode === 'thai-to-english' ? currentWord.Thai : currentWord.English}</div>
+      <div className="consonant-display">{currentConsonant}</div>
       <div className="choices">
         {choices.map((choice, index) => (
           <AnswerCard
@@ -194,4 +168,4 @@ const Quiz = ({ mode, onPlayAgain }) => {
   );
 };
 
-export default Quiz;
+export default ConsonantsQuiz;

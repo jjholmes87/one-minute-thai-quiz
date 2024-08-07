@@ -8,6 +8,7 @@ const StartScreen = ({ onStart }) => {
       <h1>One Minute Thai Quiz</h1>
       <button className="start-button" onClick={() => onStart('thai-to-english')}>Thai ➡️ English</button>
       <button className="start-button" onClick={() => onStart('english-to-thai')}>English ➡️ Thai</button>
+      <button className="start-button" onClick={() => onStart('thai-consonant-class')}>Thai Consonant Class</button>
     </div>
   );
 };
