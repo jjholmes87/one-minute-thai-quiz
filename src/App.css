@@ -118,3 +118,89 @@ h1 {
 .incorrect {
   color: red;
 }
+/* New class for question display */
+.consonant-display,
+.question-display {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.hamburger-menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.hamburger-button {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid #ccc;
+  position: absolute;
+  top: 40px;
+  right: 10px;
+  z-index: 1000;
+}
+
+.menu a {
+  padding: 10px;
+  text-decoration: none;
+  color: black;
+}
+
+.menu a:hover {
+  background-color: #f0f0f0;
+}
+
+/* Contact Page Styles */
+.contact-page {
+  padding: 20px;
+  text-align: center;
+}
+
+.contact-page h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.contact-page form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact-page label {
+  margin-top: 10px;
+}
+
+.contact-page input,
+.contact-page textarea {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.contact-page button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #0288d1;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.contact-page button:hover {
+  background-color: #0277bd;
+}
