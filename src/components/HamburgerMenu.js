@@ -16,9 +16,11 @@ const HamburgerMenu = () => {
       </button>
       {isOpen && (
         <div className="menu">
-          <Link to="https://one-minute-thai-quiz.netlify.app/" onClick={toggleMenu}>Home</Link>
+          <Link to="/" onClick={toggleMenu}>Home</Link>
           <Link to="/about" onClick={toggleMenu}>About</Link>
           <Link to="/contact" onClick={toggleMenu}>Contact</Link>
+          <Link to="/privacy-policy" onClick={toggleMenu}>Privacy Policy</Link>
+          <Link to="/terms-and-conditions" onClick={toggleMenu}>Terms and Conditions</Link>
         </div>
       )}
     </div>
