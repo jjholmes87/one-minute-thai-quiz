@@ -204,3 +204,16 @@ h1 {
 .contact-page button:hover {
   background-color: #0277bd;
 }
+
+/* Header container styles */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 50px;
+  height: auto;
+}
