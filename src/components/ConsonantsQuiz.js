@@ -24,12 +24,9 @@ const getConsonantClass = (consonant) => {
 const ConsonantsQuiz = ({ onPlayAgain }) => {
   const [currentConsonant, setCurrentConsonant] = useState('');
   const [score, setScore] = useState(0);
-  const [timer, setTimer] = useState(60);
   const [feedback, setFeedback] = useState('');
   const [highlightedChoice, setHighlightedChoice] = useState(null);
   const [gameOver, setGameOver] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const timerIntervalRef = useRef(null);
 
   const rightSoundRef = useRef(null);
   const wrongSoundRef = useRef(null);
@@ -45,8 +42,7 @@ const ConsonantsQuiz = ({ onPlayAgain }) => {
     const correctAnswer = getConsonantClass(currentConsonant);
     if (choice === correctAnswer) {
       setScore(score + 1);
-      setTimer(timer + 10);
-      setFeedback('Correct! +10 Seconds');
+      setFeedback('Correct!');
       if (rightSoundRef.current) {
         rightSoundRef.current.play();
       }
@@ -55,45 +51,21 @@ const ConsonantsQuiz = ({ onPlayAgain }) => {
 
       setTimeout(() => setFeedback(''), 5000);
     } else {
-      const newTimer = Math.max(timer - 10, 0);
       setScore(score - 1);
-      setTimer(newTimer);
-      setFeedback(`Incorrect! -10 Seconds. '${currentConsonant}' = '${correctAnswer}'`);
+      setFeedback(`Incorrect! '${currentConsonant}' = '${correctAnswer}'`);
       if (wrongSoundRef.current) {
         wrongSoundRef.current.play();
       }
       setHighlightedChoice(correctAnswer);
-      setIsPaused(true);
-    }
-  };
+      setNewConsonant(); // Move to the next question
 
-  const handleUnpause = () => {
-    setIsPaused(false);
-    setFeedback('');
-    setNewConsonant();
+      setTimeout(() => setFeedback(''), 5000); // Clear feedback after 5 seconds
+    }
   };
 
   useEffect(() => {
     setNewConsonant();
-
-    if (isPaused) {
-      clearInterval(timerIntervalRef.current);
-      return;
-    }
-
-    timerIntervalRef.current = setInterval(() => {
-      setTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerIntervalRef.current);
-          setGameOver(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timerIntervalRef.current);
-  }, [isPaused, setNewConsonant]);
+  }, [setNewConsonant]);
 
   useEffect(() => {
     if (gameOver) {
@@ -111,25 +83,10 @@ const ConsonantsQuiz = ({ onPlayAgain }) => {
     return (
       <div className="quiz-container">
         <div className="game-over">
-          Time's up! Your score: {score}
+          Game Over! Your score: {score}
         </div>
         <button onClick={handlePlayAgain} className="start-screen-button">Play Again</button>
         <audio ref={gameOverSoundRef} src="/gameover.mp3"></audio>
-      </div>
-    );
-  }
-
-  if (isPaused) {
-    if (wrongSoundRef.current) {
-      wrongSoundRef.current.play();
-    }
-    return (
-      <div className="quiz-container">
-        <div className="feedback incorrect">
-          {feedback}
-        </div>
-        <button onClick={handleUnpause} className="start-screen-button">Continue</button>
-        <audio ref={wrongSoundRef} src="/wrong.mp3"></audio>
       </div>
     );
   }
@@ -143,7 +100,6 @@ const ConsonantsQuiz = ({ onPlayAgain }) => {
       <h1>1 Minute Thai Consonant Class Quiz</h1>
       <div className="score-timer">
         <div className="score">Score: {score}</div>
-        <div className="timer">Time: {timer}</div>
       </div>
       {feedback && (
         <div style={feedbackStyle}>

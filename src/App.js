@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import StartScreen from './components/StartScreen';
 import Quiz from './components/Quiz';
 import ConsonantsQuiz from './components/ConsonantsQuiz';
+import SpeedTypingGame from './components/SpeedTypingGame';
 import HamburgerMenu from './components/HamburgerMenu';
 import About from './components/About';
 import Contact from './components/Contact';
@@ -26,6 +27,8 @@ const App = () => {
         <Route path="/" element={mode ? (
           mode === 'thai-consonant-class' ? (
             <ConsonantsQuiz onPlayAgain={handlePlayAgain} />
+          ) : mode === 'speed-typing' ? (
+            <SpeedTypingGame onPlayAgain={handlePlayAgain} />
           ) : (
             <Quiz mode={mode} onPlayAgain={handlePlayAgain} />
           )

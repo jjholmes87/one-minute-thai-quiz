@@ -13,6 +13,8 @@ const StartScreen = ({ onStart }) => {
       <button className="start-button" onClick={() => onStart('english-to-thai')}>English ➡️ Thai</button>
       <h2>Consonants</h2>
       <button className="start-button" onClick={() => onStart('thai-consonant-class')}>Classes</button>
+      <h2>Speed Typing</h2>
+      <button className="start-button" onClick={() => onStart('speed-typing')}>Speed Typing</button>
     </div>
   );
 };
