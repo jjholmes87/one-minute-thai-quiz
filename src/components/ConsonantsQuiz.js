@@ -23,7 +23,6 @@ const getConsonantClass = (consonant) => {
 
 const ConsonantsQuiz = ({ onPlayAgain }) => {
   const [currentConsonant, setCurrentConsonant] = useState('');
-  const [choices, setChoices] = useState(['mid', 'high', 'low']);
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(60);
   const [feedback, setFeedback] = useState('');
@@ -153,7 +152,7 @@ const ConsonantsQuiz = ({ onPlayAgain }) => {
       )}
       <div className="consonant-display">{currentConsonant}</div>
       <div className="choices">
-        {choices.map((choice, index) => (
+        {['mid', 'high', 'low'].map((choice, index) => (
           <AnswerCard
             key={index}
             choice={choice}
