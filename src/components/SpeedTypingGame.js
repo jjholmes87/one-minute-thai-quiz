@@ -13,6 +13,15 @@ const SpeedTypingGame = ({ onPlayAgain }) => {
   const rightSoundRef = useRef(null);
   const gameOverSoundRef = useRef(null); // Add reference for game over sound
 
+  const setNewWord = useCallback((wordList) => {
+    if (wordList.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * wordList.length);
+    const newWord = wordList[randomIndex];
+    console.log("New word:", newWord);
+    setCurrentWord(newWord);
+    setTypedWord('');
+  }, []);
+
   const fetchWords = useCallback(async () => {
     try {
       const response = await fetch('/words.xlsx');
@@ -27,15 +36,6 @@ const SpeedTypingGame = ({ onPlayAgain }) => {
       console.error("Error fetching words:", error);
     }
   }, [setNewWord]);
-
-  const setNewWord = useCallback((wordList) => {
-    if (wordList.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * wordList.length);
-    const newWord = wordList[randomIndex];
-    console.log("New word:", newWord);
-    setCurrentWord(newWord);
-    setTypedWord('');
-  }, []);
 
   useEffect(() => {
     fetchWords();
