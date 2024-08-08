@@ -26,7 +26,7 @@ const SpeedTypingGame = ({ onPlayAgain }) => {
     } catch (error) {
       console.error("Error fetching words:", error);
     }
-  }, []);
+  }, [setNewWord]);
 
   const setNewWord = useCallback((wordList) => {
     if (wordList.length === 0) return;
