@@ -5,7 +5,7 @@ const StartScreen = ({ onStart }) => {
   return (
     <div className="start-screen">
       <div className="header-container">
-        <h1>One Minute Thai Quizzes</h1>
+        <h1>Learn Thai with Games</h1>
         <img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="Logo" className="logo" />
       </div>
       <h2>Vocabulary</h2>
