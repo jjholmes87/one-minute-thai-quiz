@@ -26,7 +26,7 @@ const ConsonantsQuiz = ({ onPlayAgain }) => {
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [highlightedChoice, setHighlightedChoice] = useState(null);
-  const [gameOver, setGameOver] = useState(false);
+  const [gameOver] = useState(false);
 
   const rightSoundRef = useRef(null);
   const wrongSoundRef = useRef(null);
