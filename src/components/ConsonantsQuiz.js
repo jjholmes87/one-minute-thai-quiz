@@ -97,7 +97,7 @@ const ConsonantsQuiz = ({ onPlayAgain }) => {
 
   return (
     <div className="quiz-container">
-      <h1>1 Minute Thai Consonant Class Quiz</h1>
+      <h1>Thai Consonants Class Quiz</h1>
       <div className="score-timer">
         <div className="score">Score: {score}</div>
       </div>

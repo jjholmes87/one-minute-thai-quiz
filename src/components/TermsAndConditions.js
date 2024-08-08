@@ -37,7 +37,7 @@ const TermsAndConditions = () => {
       </p>
       <h2>Governing Law and Jurisdiction</h2>
       <p>
-        These Terms shall be governed by and construed in accordance with the laws of the local jurisdiction, without giving effect to any choice or conflict of law provision. Any legal suit, action, or proceeding arising out of or related to these Terms or the website shall be instituted exclusively in the courts of [JURISDICTION].
+        These Terms shall be governed by and construed in accordance with the laws of the local jurisdiction, without giving effect to any choice or conflict of law provision. Any legal suit, action, or proceeding arising out of or related to these Terms or the website shall be instituted exclusively in the courts of the local jurisdiction.
       </p>
       <h2>Changes to These Terms</h2>
       <p>

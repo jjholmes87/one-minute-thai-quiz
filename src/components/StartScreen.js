@@ -5,7 +5,7 @@ const StartScreen = ({ onStart }) => {
   return (
     <div className="start-screen">
       <div className="header-container">
-        <h1>Learn Thai with Games</h1>
+        <h1>Learn Thai with games</h1>
         <img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="Logo" className="logo" />
       </div>
       <h2>Vocabulary</h2>
@@ -14,7 +14,7 @@ const StartScreen = ({ onStart }) => {
       <h2>Consonants</h2>
       <button className="start-button" onClick={() => onStart('thai-consonant-class')}>Classes</button>
       <h2>Practice</h2>
-      <button className="start-button" onClick={() => onStart('speed-typing')}>Speed Typing</button>
+      <button className="start-button" onClick={() => onStart('speed-typing')}>Typing</button>
     </div>
   );
 };
