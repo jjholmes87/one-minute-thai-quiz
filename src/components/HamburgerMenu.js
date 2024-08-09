@@ -9,18 +9,14 @@ const HamburgerMenu = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleHomeClick = () => {
-    window.location.reload();
-  };
-
-  return (
+   return (
     <div className="hamburger-menu">
       <button onClick={toggleMenu} className="hamburger-button">
         ☰
       </button>
       {isOpen && (
         <div className="menu">
-          <a href="#" onClick={handleHomeClick}>Home</a> {/* Use <a> tag and handle click event */}
+          <a href="/">Home</a> {/* Use <a> tag and handle click event */}
           <Link to="/about" onClick={toggleMenu}>About</Link>
           <Link to="/contact" onClick={toggleMenu}>Contact</Link>
           <Link to="/privacy-policy" onClick={toggleMenu}>Privacy Policy</Link>
