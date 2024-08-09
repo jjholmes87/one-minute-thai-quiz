@@ -81,19 +81,20 @@ h1 {
 }
 
 .choices {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .answer-card {
-  background-color: #e1f5fe;
-  border: 1px solid #81d4fa;
-  border-radius: 5px;
-  padding: 10px;
+  width: 100px;
+  height: 50px;
+  margin: 10px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
 }
 
 .answer-card:hover {
@@ -118,9 +119,16 @@ h1 {
 .incorrect {
   color: red;
 }
+
 /* New class for question display */
 .consonant-display,
 .question-display {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.question-word {
   font-size: 2em;
   font-weight: bold;
   margin: 20px 0;
@@ -279,7 +287,7 @@ h1 {
 }
 
 .typing-input {
-  width: 90%;
+  width: 0%;
   padding: 10px;
   font-size: 1.2em;
   border: 1px solid #ccc;

@@ -1,4 +1,3 @@
-// src/components/Quiz.js
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { readXlsxFile } from '../utils';
@@ -176,7 +175,7 @@ const Quiz = ({ mode, onPlayAgain }) => {
           {feedback}
         </div>
       )}
-      <div>{mode === 'thai-to-english' ? currentWord.Thai : currentWord.English}</div>
+      <div className="question-word">{mode === 'thai-to-english' ? currentWord.Thai : currentWord.English}</div>
       <div className="choices">
         {choices.map((choice, index) => (
           <AnswerCard
